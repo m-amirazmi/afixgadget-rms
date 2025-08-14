@@ -9,17 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PosRouteImport } from './routes/_pos'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AdminRouteImport } from './routes/_admin'
 import { Route as AdminIndexRouteImport } from './routes/_admin/index'
-import { Route as PosPosIndexRouteImport } from './routes/_pos/pos/index'
 import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
 
-const PosRoute = PosRouteImport.update({
-  id: '/_pos',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -33,11 +27,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const PosPosIndexRoute = PosPosIndexRouteImport.update({
-  id: '/pos/',
-  path: '/pos/',
-  getParentRoute: () => PosRoute,
-} as any)
 const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
   id: '/login/',
   path: '/login/',
@@ -47,52 +36,33 @@ const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AdminIndexRoute
   '/login': typeof AuthLoginIndexRoute
-  '/pos': typeof PosPosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AdminIndexRoute
   '/login': typeof AuthLoginIndexRoute
-  '/pos': typeof PosPosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_admin': typeof AdminRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
-  '/_pos': typeof PosRouteWithChildren
   '/_admin/': typeof AdminIndexRoute
   '/_auth/login/': typeof AuthLoginIndexRoute
-  '/_pos/pos/': typeof PosPosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/pos'
+  fullPaths: '/' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/pos'
-  id:
-    | '__root__'
-    | '/_admin'
-    | '/_auth'
-    | '/_pos'
-    | '/_admin/'
-    | '/_auth/login/'
-    | '/_pos/pos/'
+  to: '/' | '/login'
+  id: '__root__' | '/_admin' | '/_auth' | '/_admin/' | '/_auth/login/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
-  PosRoute: typeof PosRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_pos': {
-      id: '/_pos'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -113,13 +83,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/_pos/pos/': {
-      id: '/_pos/pos/'
-      path: '/pos'
-      fullPath: '/pos'
-      preLoaderRoute: typeof PosPosIndexRouteImport
-      parentRoute: typeof PosRoute
     }
     '/_auth/login/': {
       id: '/_auth/login/'
@@ -151,20 +114,9 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface PosRouteChildren {
-  PosPosIndexRoute: typeof PosPosIndexRoute
-}
-
-const PosRouteChildren: PosRouteChildren = {
-  PosPosIndexRoute: PosPosIndexRoute,
-}
-
-const PosRouteWithChildren = PosRoute._addFileChildren(PosRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
-  PosRoute: PosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
